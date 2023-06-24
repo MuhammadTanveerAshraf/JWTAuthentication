@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace JWTAuthentication.Controllers
 {
-    [Authorize]
+    
     [Route("api/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
@@ -43,9 +43,12 @@ namespace JWTAuthentication.Controllers
             return Ok(token);
         }
 
+        [Authorize]
         [HttpGet("GetNames")]
         public IActionResult GetNames()
         {
+            var currentUser = HttpContext.User;
+
             var identity = User.Identity as ClaimsIdentity;
             if (identity != null)
             {

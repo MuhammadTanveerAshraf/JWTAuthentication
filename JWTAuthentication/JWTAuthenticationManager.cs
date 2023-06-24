@@ -21,6 +21,8 @@ namespace JWTAuthentication
 
         public string Authenticate(string userName, string password)
         {
+            return GetToken();
+            
             if (!users.Any(x => x.Key == userName && x.Value == password))
             {
                 return null;
@@ -45,7 +47,6 @@ namespace JWTAuthentication
 
         public string GetToken()
         {
-            string key = "my_secret_key";
             var issuer = "http://mysite.com";
             var securitKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key));
             var credentials = new SigningCredentials(securitKey, SecurityAlgorithms.HmacSha256);
