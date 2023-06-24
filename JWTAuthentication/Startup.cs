@@ -26,8 +26,7 @@ namespace JWTAuthentication
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			var key = "This is my Security Key";
-			services.AddSingleton<IJWTAuthenticationManager>(new JWTAuthenticationManager(key));
+			services.AddSingleton<IJWTAuthenticationManager>(new JWTAuthenticationManager(Configuration["JWT:key"]));
 			services.AddAuthentication(x =>
 			{
 				x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -38,10 +37,13 @@ namespace JWTAuthentication
 				x.SaveToken = true;
 				x.TokenValidationParameters = new TokenValidationParameters
 				{
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
 					ValidateIssuerSigningKey = true,
-					IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
-					ValidateIssuer = false,
-					ValidateAudience = false
+					IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["JWT:key"])),
+					ValidIssuer = Configuration["JWT:issuer"],
+					ValidAudience = Configuration["JWT:audience"],
 				};
 			});
 

@@ -48,5 +48,7 @@ namespace JWTAuthentication.Controllers
 			}
 			return Ok(token);
 		}
+
+
 	}
 }
