@@ -43,33 +43,17 @@ namespace JWTAuthentication.Controllers
             return Ok(token);
         }
 
-        [AllowAnonymous]
-        [HttpGet("GetToken")]
-        public IActionResult GetToken()
+        [HttpGet("GetNames")]
+        public IActionResult GetNames()
         {
-            string key = "my_secret_key";
-            var issuer = "http://mysite.com";
-            var securitKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key));
-            var credentials = new SigningCredentials(securitKey, SecurityAlgorithms.HmacSha256);
-
-            var permClaims = new List<Claim>
+            var identity = User.Identity as ClaimsIdentity;
+            if (identity != null)
             {
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("valid", "1"),
-                new Claim("userId", "1"),
-                new Claim("name", "Tanveer")
-            };
-
-            var token = new JwtSecurityToken(issuer,
-                issuer,
-                permClaims,
-                expires: DateTime.Now.AddHours(1),
-                signingCredentials: credentials
-                );
-
-            var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
-
-            return Ok(new { token = jwtToken });
+                IEnumerable<Claim> claims = identity.Claims;
+                var name = claims.Where(x => x.Type == "name").FirstOrDefault().Value;
+                return Ok(new { data = name });
+            }
+            return null;
         }
     }
 }
